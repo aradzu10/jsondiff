@@ -1,9 +1,27 @@
 #!/usr/bin/env python3
 from absl import app, flags, logging
 import json
+import sys
 
 FLAGS = flags.FLAGS
 flags.DEFINE_bool("color", True, "Print lines with colors.")
+
+
+BLUE = "\033[96m"
+GREEN = "\033[92m"
+RESET = "\033[00m"
+
+
+def blue_str(string):
+    if not FLAGS.color:
+        return string
+    return f"{BLUE}{string}{RESET}"
+
+
+def green_str(string):
+    if not FLAGS.color:
+        return string
+    return f"{GREEN}{string}{RESET}"
 
 
 def load_dicts(dict_a_path, dict_b_path):
@@ -59,21 +77,21 @@ def dict_diff(dict_a, dict_b):
 
 
 def print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff):
-    print("Keys inside of json_a, missing in json_b")
+    print(blue_str("Keys inside of json_a"), "(missing in json_b)")
     for key, value in dict_a_missing_keys:
         print("::".join(key), "=", value)
     print("")
 
-    print("Keys inside of json_b, missing in json_a")
+    print(green_str("Keys inside of json_b"), "(missing in json_a)")
     for key, value in dict_b_missing_keys:
         print("::".join(key), "=", value)
     print("")
 
     print("Keys with diffrent values")
     for key, value_a, value_b in value_diff:
-        print("::".join(key))
-        print("json a:", value_a)
-        print("json b:", value_b)
+        print("@", "::".join(key))
+        print(blue_str(f"json a: {value_a}"))
+        print(green_str(f"json a: {value_a}"))
         print("")
 
 
@@ -83,7 +101,11 @@ def main(argv):
         print(f"Got: {argv}.")
         exit(1)
 
-    print(f"Got json_a = {argv[1]}, json_b = {argv[2]}")
+    if not sys.stdout.isatty():
+        FLAGS.color = False
+
+    print("Got", blue_str(f"json_a = {argv[1]}") + ",", green_str(f"json_b = {argv[2]}"))
+    print("")
     dict_a, dict_b = load_dicts(argv[1], argv[2])
     dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff(dict_a, dict_b)
     print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff)
