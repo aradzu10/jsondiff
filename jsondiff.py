@@ -28,7 +28,7 @@ def dict_diff_impl(dict_a, dict_b):
 
     for key in dict_b:
         if key not in dict_a:
-            dict_b_missing_keys.append([[key], dict_a[key]])
+            dict_b_missing_keys.append([[key], dict_b[key]])
 
     for key in dict_a:
         if key not in dict_b:
