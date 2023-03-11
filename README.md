@@ -8,13 +8,19 @@ After cloning, run `jsondiff.py`.
 
 ## Usage
 ```bash
-» python jsondiff.py
-<Complete>
+» python jsondiff.py -h
+usage: jsondiff [-h] [--nocolor] json_a json_b
+
+Json diff using a python script in your bash.
+
+positional arguments:
+  json_a      First json to be compare.
+  json_b      Second json to be compare.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --nocolor   Turn colors off.
 ```
-
-JSON one and two are the jsons to be compare.
-
-`--nocolor` is determind to cancel colors. When redirect output, the color will also be canceled.
 
 ## Examples
 ```

@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
-from absl import app, flags, logging
+import argparse
 import json
 import sys
 
-FLAGS = flags.FLAGS
-flags.DEFINE_bool("color", True, "Print lines with colors.")
+
+parser = argparse.ArgumentParser(
+    prog='jsondiff',
+    description='Json diff using a python script in your bash.',
+)
+parser.add_argument('json_a', help="First json to be compare.")
+parser.add_argument('json_b', help="Second json to be compare.")
+parser.add_argument(
+    '--nocolor', action='store_true', default=False, help="Turn colors off.")
+args = parser.parse_args()
 
 
 BLUE = "\033[96m"
@@ -13,13 +21,13 @@ RESET = "\033[00m"
 
 
 def blue_str(string):
-    if not FLAGS.color:
+    if args.nocolor:
         return string
     return f"{BLUE}{string}{RESET}"
 
 
 def green_str(string):
-    if not FLAGS.color:
+    if args.nocolor:
         return string
     return f"{GREEN}{string}{RESET}"
 
@@ -97,21 +105,16 @@ def print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff):
         print("")
 
 
-def main(argv):
-    if len(argv) != 3:
-        print("Error! usage: jsondiff.py [--color] FILE1 FILE2")
-        print(f"Got: {argv}.")
-        exit(1)
-
+def main():
     if not sys.stdout.isatty():
-        FLAGS.color = False
+        args.nocolor = True
 
-    print("Got", blue_str(f"json_a = {argv[1]}") + ",", green_str(f"json_b = {argv[2]}"))
+    print("Got", blue_str(f"json_a = {args.json_a}") + ",", green_str(f"json_b = {args.json_b}"))
     print("")
-    dict_a, dict_b = load_dicts(argv[1], argv[2])
+    dict_a, dict_b = load_dicts(args.json1, args.json2)
     dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff(dict_a, dict_b)
     print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff)
 
 
 if __name__ == '__main__':
-    app.run(main)
+    main()
