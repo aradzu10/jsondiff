@@ -13,10 +13,39 @@ def load_dicts(dict_a_path, dict_b_path):
     return dict_a, dict_b
 
 
-def dict_diff(dict_a, dict_b):
+def dict_diff_impl(dict_a, dict_b):
     dict_a_missing_keys = []
     dict_b_missing_keys = []
     value_diff = []
+
+    for key in dict_b:
+        if key not in dict_a:
+            dict_b_missing_keys.append([[key], dict_a[key]])
+
+    for key in dict_a:
+        if key not in dict_b:
+            dict_a_missing_keys.append([[key], dict_a[key]])
+            continue
+
+        dict_a_mk, dict_b_mk, sub_value_d = dict_diff_impl(dict_a[key], dict_b[key])
+        for sub_key in dict_a_mk:
+            sub_key.append(key)
+        for sub_key in dict_b_mk:
+            sub_key.append(key)
+        for sub_key in sub_value_d:
+            sub_key.append(key)
+        dict_a_missing_keys.extend(dict_a_mk)
+        dict_b_missing_keys.extend(dict_b_mk)
+        value_diff.extend(sub_value_d)
+
+    return dict_a_missing_keys, dict_b_missing_keys, value_diff
+
+
+def dict_diff(dict_a, dict_b):
+    dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff(dict_a, dict_b)
+    dict_a_missing_keys = [[key[::-1], value] for key, value in dict_a_missing_keys]
+    dict_b_missing_keys = [[key[::-1], value] for key, value in dict_b_missing_keys]
+    value_diff = [[key[::-1], value_a, value_b] for key, value_a, value_b in value_diff]
     return dict_a_missing_keys, dict_b_missing_keys, value_diff
 
 
