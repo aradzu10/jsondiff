@@ -70,6 +70,8 @@ def dict_diff_impl(dict_a, dict_b):
 
 def dict_diff(dict_a, dict_b):
     dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff_impl(dict_a, dict_b)
+    # Keys are reverse, because it better to add the key as append instead of
+    # allocating a new list each time we go back in the recursion.
     dict_a_missing_keys = [[key[::-1], value] for key, value in dict_a_missing_keys]
     dict_b_missing_keys = [[key[::-1], value] for key, value in dict_b_missing_keys]
     value_diff = [[key[::-1], value_a, value_b] for key, value_a, value_b in value_diff]
