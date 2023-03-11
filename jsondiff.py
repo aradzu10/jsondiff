@@ -18,6 +18,14 @@ def dict_diff_impl(dict_a, dict_b):
     dict_b_missing_keys = []
     value_diff = []
 
+    if not isinstance(dict_a, dict) or not isinstance(dict_b, dict):
+        empty_diff = []
+        if dict_a == dict_b:
+            return empty_diff, empty_diff, empty_diff
+        empty_key = []
+        value_diff.append([empty_key, dict_a, dict_b])
+        return empty_diff, empty_diff, value_diff
+
     for key in dict_b:
         if key not in dict_a:
             dict_b_missing_keys.append([[key], dict_a[key]])
@@ -28,11 +36,11 @@ def dict_diff_impl(dict_a, dict_b):
             continue
 
         dict_a_mk, dict_b_mk, sub_value_d = dict_diff_impl(dict_a[key], dict_b[key])
-        for sub_key in dict_a_mk:
+        for sub_key, value in dict_a_mk:
             sub_key.append(key)
-        for sub_key in dict_b_mk:
+        for sub_key, value in dict_b_mk:
             sub_key.append(key)
-        for sub_key in sub_value_d:
+        for sub_key, value_a, value_b in sub_value_d:
             sub_key.append(key)
         dict_a_missing_keys.extend(dict_a_mk)
         dict_b_missing_keys.extend(dict_b_mk)
@@ -42,7 +50,7 @@ def dict_diff_impl(dict_a, dict_b):
 
 
 def dict_diff(dict_a, dict_b):
-    dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff(dict_a, dict_b)
+    dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff_impl(dict_a, dict_b)
     dict_a_missing_keys = [[key[::-1], value] for key, value in dict_a_missing_keys]
     dict_b_missing_keys = [[key[::-1], value] for key, value in dict_b_missing_keys]
     value_diff = [[key[::-1], value_a, value_b] for key, value_a, value_b in value_diff]
