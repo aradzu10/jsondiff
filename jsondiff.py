@@ -21,7 +21,19 @@ def dict_diff(dict_a, dict_b):
 
 
 def print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff):
-    pass
+    print("Keys inside of json_a, missing in json_b")
+    for key, value in dict_a_missing_keys:
+        print("::".join(key), "=", value)
+
+    print("Keys inside of json_b, missing in json_a")
+    for key, value in dict_b_missing_keys:
+        print("::".join(key), "=", value)
+
+    print("Keys with diffrent values")
+    for key, value_a, value_b in dict_b_missing_keys:
+        print("::".join(key))
+        print("a:", value_a)
+        print("b:", value_b)
 
 
 def main(argv):
