@@ -3,16 +3,7 @@ import argparse
 import json
 import sys
 
-
-parser = argparse.ArgumentParser(
-    prog='jsondiff',
-    description='Json diff using a python script in your bash.',
-)
-parser.add_argument('json_a', help="First json to be compare.")
-parser.add_argument('json_b', help="Second json to be compare.")
-parser.add_argument(
-    '--nocolor', action='store_true', default=False, help="Turn colors off.")
-args = parser.parse_args()
+args = None
 
 
 BLUE = "\033[96m"
@@ -101,7 +92,7 @@ def print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff):
     for key, value_a, value_b in value_diff:
         print("@", "::".join(key))
         print(blue_str(f"json a: {value_a}"))
-        print(green_str(f"json a: {value_a}"))
+        print(green_str(f"json b: {value_b}"))
         print("")
 
 
@@ -111,10 +102,19 @@ def main():
 
     print("Got", blue_str(f"json_a = {args.json_a}") + ",", green_str(f"json_b = {args.json_b}"))
     print("")
-    dict_a, dict_b = load_dicts(args.json1, args.json2)
+    dict_a, dict_b = load_dicts(args.json_a, args.json_b)
     dict_a_missing_keys, dict_b_missing_keys, value_diff = dict_diff(dict_a, dict_b)
     print_diff(dict_a_missing_keys, dict_b_missing_keys, value_diff)
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='jsondiff',
+        description='Json diff using a python script in your bash.',
+    )
+    parser.add_argument('json_a', help="First json to be compare.")
+    parser.add_argument('json_b', help="Second json to be compare.")
+    parser.add_argument(
+        '--nocolor', action='store_true', default=False, help="Turn colors off.")
+    args = parser.parse_args()
     main()
